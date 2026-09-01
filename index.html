@@ -1,0 +1,984 @@
+<meta charset="utf-8">
+<title>안개관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Serif+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#13100c;
+    --bg-deep:#0b0908;
+    --panel:#efe6d2;
+    --panel-shadow:#8a7c58;
+    --panel-edge:#d9c9a1;
+    --ink:#2a2317;
+    --ink-soft:#6b5c3e;
+    --amber:#c8903f;
+    --amber-bright:#e5b16a;
+    --blood:#9a3d2f;
+    --blood-bright:#c25846;
+    --line:#3a3327;
+    --line-soft:#2a251c;
+    --text-lo:#a89a7c;
+    --text-hi:#f1e8d4;
+    --chip-bg:#1e1912;
+    --chip-bg-active:#2b2416;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 600px at 78% -10%, rgba(200,144,63,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 10% 110%, rgba(200,144,63,0.06), transparent 55%),
+      var(--bg);
+    color:var(--text-hi);
+    font-family:'Noto Sans KR', -apple-system, sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{background:var(--amber); color:#1a1408;}
+
+  button{font-family:inherit; cursor:pointer;}
+  button:focus-visible, [tabindex]:focus-visible, summary:focus-visible{
+    outline:2px solid var(--amber-bright);
+    outline-offset:2px;
+  }
+
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+
+  #app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:22px 18px 60px;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    padding-bottom:16px;
+    margin-bottom:20px;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .masthead h1{
+    font-family:'Song Myung', 'Noto Serif KR', serif;
+    font-size:clamp(28px,4vw,40px);
+    letter-spacing:0.04em;
+    margin:0;
+    color:var(--text-hi);
+    text-wrap:balance;
+  }
+  .masthead .case-no{
+    color:var(--amber);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+  }
+  .masthead .status{
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--text-lo);
+    text-align:right;
+  }
+  .masthead .status b{color:var(--amber-bright); font-weight:500;}
+
+  /* ---------- stage layout ---------- */
+  .stage{
+    display:grid;
+    grid-template-columns:296px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .stage{grid-template-columns:1fr;}
+  }
+
+  /* ---------- sidebar ---------- */
+  .side-block{
+    background:var(--bg-deep);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .side-title{
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--text-lo);
+    margin:0 0 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .side-title .count{color:var(--amber); font-family:'IBM Plex Mono',monospace;}
+
+  .loc-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .loc-btn{
+    background:var(--chip-bg);
+    border:1px solid var(--line);
+    color:var(--text-lo);
+    padding:10px 8px;
+    font-size:13px;
+    text-align:left;
+    border-radius:2px;
+    transition:border-color .15s, color .15s, background .15s;
+    position:relative;
+  }
+  .loc-btn .sub{display:block; font-size:10px; color:var(--ink-soft); margin-top:2px; letter-spacing:.06em;}
+  .loc-btn:hover{border-color:var(--amber); color:var(--text-hi);}
+  .loc-btn[aria-current="true"]{
+    background:var(--chip-bg-active);
+    border-color:var(--amber);
+    color:var(--amber-bright);
+  }
+  .loc-btn .flag{
+    position:absolute; top:6px; right:6px;
+    width:6px; height:6px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 6px var(--amber);
+  }
+
+  .suspect-list{display:flex; flex-direction:column; gap:8px;}
+  .suspect-row{
+    display:flex; align-items:center; gap:10px;
+    background:var(--chip-bg);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:8px;
+    text-align:left;
+    color:var(--text-lo);
+    width:100%;
+  }
+  .suspect-row:hover{border-color:var(--amber); color:var(--text-hi);}
+  .mugshot{
+    flex:none;
+    width:34px; height:34px;
+    border-radius:1px;
+    background:linear-gradient(160deg,#26201a,#100d09);
+    border:1px solid var(--line-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Song Myung',serif;
+    font-size:16px;
+    color:var(--amber);
+  }
+  .suspect-meta{display:flex; flex-direction:column; line-height:1.3;}
+  .suspect-meta .nm{font-size:13px; color:var(--text-hi);}
+  .suspect-meta .rl{font-size:10.5px; color:var(--ink-soft); letter-spacing:.04em;}
+
+  .evidence-locker{display:flex; flex-direction:column; gap:6px;}
+  .ev-chip{
+    display:flex; gap:8px; align-items:baseline;
+    font-size:12.5px; color:var(--text-lo);
+    border-left:2px solid var(--amber);
+    background:transparent;
+    padding:6px 8px 6px 8px;
+    width:100%;
+    text-align:left;
+    border-top:none; border-right:none; border-bottom:none;
+    transition:background .15s, color .15s;
+  }
+  .ev-chip:hover{background:var(--chip-bg); color:var(--text-hi);}
+  .ev-chip .tag{color:var(--amber); font-size:10px; letter-spacing:.08em; flex:none;}
+  .ev-empty{font-size:12px; color:var(--ink-soft); font-style:italic;}
+
+  .notes-box textarea{
+    width:100%;
+    min-height:120px;
+    background:var(--chip-bg);
+    border:1px solid var(--line);
+    color:var(--text-hi);
+    font-family:'Noto Serif KR', serif;
+    font-size:13px;
+    line-height:1.6;
+    padding:10px;
+    border-radius:2px;
+    resize:vertical;
+  }
+  .notes-box textarea:focus-visible{
+    outline:2px solid var(--amber-bright);
+    outline-offset:1px;
+  }
+  .notes-box .notes-caption{
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+    letter-spacing:.04em;
+  }
+
+  .accuse-btn{
+    width:100%;
+    background:linear-gradient(180deg, var(--blood-bright), var(--blood));
+    border:1px solid #5e241c;
+    color:#f6e9e2;
+    padding:12px;
+    font-size:13px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    border-radius:2px;
+    font-weight:500;
+    box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 14px -8px rgba(154,61,47,.7);
+  }
+  .accuse-btn:hover{filter:brightness(1.08);}
+
+  /* ---------- paper panel ---------- */
+  .paper-wrap{
+    position:relative;
+    border-radius:2px;
+    padding:2px;
+  }
+  .paper-panel{
+    background:
+      repeating-linear-gradient(0deg, rgba(120,100,60,0.035) 0px, rgba(120,100,60,0.035) 1px, transparent 1px, transparent 3px),
+      radial-gradient(ellipse 500px 260px at 85% 0%, rgba(200,144,63,0.14), transparent 60%),
+      var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:2px;
+    box-shadow:0 20px 50px -25px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.15);
+    min-height:520px;
+    display:flex;
+    flex-direction:column;
+  }
+  .loc-head{
+    padding:20px 26px 14px;
+    border-bottom:1px dashed var(--panel-shadow);
+  }
+  .loc-head .kicker{
+    font-size:10.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .loc-head h2{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:22px;
+    margin:4px 0 0;
+    color:var(--ink);
+  }
+
+  .log{
+    flex:1;
+    padding:18px 26px;
+    overflow-y:auto;
+    max-height:44vh;
+    font-family:'Noto Serif KR', serif;
+    color:var(--ink);
+  }
+  .log::-webkit-scrollbar{width:8px;}
+  .log::-webkit-scrollbar-thumb{background:var(--panel-shadow); border-radius:4px;}
+
+  .entry{margin-bottom:16px; line-height:1.75; font-size:15px;}
+  .entry.location p{margin:2px 0 0;}
+  .entry .head{
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--ink-soft);
+    margin-bottom:3px;
+    display:flex;
+    gap:8px;
+    align-items:baseline;
+  }
+  .entry.clue .head{color:var(--amber);}
+  .entry.clue{border-left:2px solid var(--amber); padding-left:12px;}
+  .entry.speech .head{color:var(--blood);}
+  .entry.speech{border-left:2px solid var(--blood); padding-left:12px;}
+  .entry.speech p{font-style:italic;}
+  .entry.system{color:var(--ink-soft); font-size:13px; font-style:italic;}
+
+  .actions{
+    padding:14px 26px 22px;
+    border-top:1px dashed var(--panel-shadow);
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .act-btn{
+    background:#fbf6ea;
+    border:1px solid var(--panel-shadow);
+    color:var(--ink);
+    padding:9px 14px;
+    font-size:13px;
+    border-radius:2px;
+    transition:transform .1s, box-shadow .15s;
+  }
+  .act-btn:hover{box-shadow:0 4px 10px -6px rgba(0,0,0,.4); transform:translateY(-1px);}
+  .act-btn.done{color:var(--ink-soft); background:#efe6d2; border-style:dashed;}
+  .act-btn.talk{border-color:var(--blood); color:var(--blood);}
+  .act-btn.talk:hover{background:#f6e2dd;}
+  .act-btn:disabled{opacity:.5; cursor:default; transform:none; box-shadow:none;}
+
+  /* ---------- overlays ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(8,6,4,0.82);
+    backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .overlay[hidden]{display:none;}
+  .modal{
+    background:var(--panel);
+    color:var(--ink);
+    max-width:560px;
+    width:100%;
+    max-height:88vh;
+    overflow-y:auto;
+    border-radius:2px;
+    border:1px solid var(--panel-edge);
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.8);
+  }
+  .modal-inner{padding:28px 28px 24px;}
+  .modal .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber);
+  }
+  .modal h2{
+    font-family:'Song Myung','Noto Serif KR',serif;
+    font-size:26px; margin:6px 0 14px; text-wrap:balance;
+  }
+  .modal p{font-family:'Noto Serif KR',serif; line-height:1.8; font-size:15px; margin:0 0 12px;}
+  .modal-actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+  .btn-primary{
+    background:linear-gradient(180deg, var(--amber-bright), var(--amber));
+    border:1px solid #8c6326;
+    color:#1c1408;
+    padding:11px 20px;
+    font-weight:600;
+    border-radius:2px;
+    font-size:14px;
+  }
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-ghost{
+    background:transparent;
+    border:1px solid var(--panel-shadow);
+    color:var(--ink);
+    padding:11px 18px;
+    border-radius:2px;
+    font-size:14px;
+  }
+  .btn-ghost:hover{background:rgba(0,0,0,.05);}
+
+  .field-title{
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft);
+    margin:18px 0 8px;
+  }
+  .suspect-pick{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .pick-card{
+    border:1px solid var(--panel-shadow);
+    background:#fbf6ea;
+    border-radius:2px;
+    padding:10px;
+    text-align:left;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .pick-card .nm{font-weight:600; display:block;}
+  .pick-card .rl{font-size:11px; color:var(--ink-soft);}
+  .pick-card[aria-pressed="true"]{border-color:var(--blood); background:#f6e2dd; box-shadow:0 0 0 1px var(--blood) inset;}
+
+  .evidence-pick{display:flex; flex-direction:column; gap:6px;}
+  .ev-pick-row{
+    display:flex; align-items:center; gap:10px;
+    border:1px solid var(--panel-shadow);
+    background:#fbf6ea;
+    border-radius:2px;
+    padding:8px 10px;
+    font-size:13px;
+    text-align:left;
+    color:var(--ink);
+  }
+  .ev-pick-row[aria-pressed="true"]{border-color:var(--amber); background:#f6ecd3;}
+  .ev-pick-row .box{
+    flex:none; width:14px; height:14px; border:1px solid var(--ink-soft); border-radius:2px;
+    display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--amber);
+  }
+  .ev-pick-row[aria-pressed="true"] .box::after{content:"✓";}
+  .pick-hint{font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
+
+  .verdict{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px dashed var(--panel-shadow);
+  }
+  .verdict.win .kicker{color:var(--amber);}
+  .verdict.lose .kicker{color:var(--blood);}
+
+  .lamp-flicker{
+    position:fixed; top:-10%; right:-8%;
+    width:520px; height:520px;
+    background:radial-gradient(circle, rgba(200,144,63,.16), transparent 65%);
+    pointer-events:none;
+    z-index:0;
+    animation:flicker 7s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{opacity:1;}
+    45%{opacity:.75;}
+    50%{opacity:1;}
+    72%{opacity:.85;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .lamp-flicker{animation:none;}
+  }
+
+  details.mobile-only{display:none;}
+  @media (max-width:860px){
+    .side-block.desktop-suspects, .side-block.desktop-evidence{display:none;}
+    details.mobile-only{display:block; margin-bottom:14px;}
+    details.mobile-only summary{
+      font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-lo);
+      cursor:pointer; padding:12px 14px; background:var(--bg-deep); border:1px solid var(--line);
+    }
+    details.mobile-only[open] summary{color:var(--amber-bright);}
+    details.mobile-only .side-block{border-top:none; margin-top:-1px;}
+  }
+</style>
+
+<div class="lamp-flicker" aria-hidden="true"></div>
+
+<div id="app">
+  <header class="masthead">
+    <div>
+      <div class="case-no mono">CASE FILE — 안개관 실종의 밤</div>
+      <h1>안개관</h1>
+    </div>
+    <div class="status">수집한 증거 <b id="ev-count-top">0</b> / <b id="ev-total-top">12</b><br>사건 상태 <b id="case-status">수사 중</b></div>
+  </header>
+
+  <div class="stage">
+    <aside>
+      <div class="side-block">
+        <p class="side-title">저택 안내</p>
+        <div class="loc-grid" id="loc-grid"></div>
+      </div>
+
+      <div class="side-block notes-box">
+        <p class="side-title">수사 메모</p>
+        <textarea id="notes" placeholder="추리를 여기에 정리해보세요. 누가, 왜, 어떻게…"></textarea>
+        <p class="notes-caption">이 브라우저에 자동 저장됩니다.</p>
+      </div>
+
+      <details class="mobile-only">
+        <summary>용의자 · 증거함 열기</summary>
+        <div class="side-block" style="border-top:1px solid var(--line);">
+          <p class="side-title">용의자</p>
+          <div class="suspect-list" id="suspect-list-m"></div>
+        </div>
+        <div class="side-block">
+          <p class="side-title">증거함 <span class="count mono" id="ev-count-m">0/12</span></p>
+          <div class="evidence-locker" id="ev-locker-m"></div>
+        </div>
+      </details>
+
+      <div class="side-block desktop-suspects">
+        <p class="side-title">용의자</p>
+        <div class="suspect-list" id="suspect-list"></div>
+      </div>
+
+      <div class="side-block desktop-evidence">
+        <p class="side-title">증거함 <span class="count mono" id="ev-count">0/12</span></p>
+        <div class="evidence-locker" id="ev-locker"></div>
+      </div>
+
+      <button class="accuse-btn" id="accuse-open">사건 종결 · 범인 지목</button>
+    </aside>
+
+    <div class="paper-wrap">
+      <div class="paper-panel">
+        <div class="loc-head">
+          <div class="kicker mono" id="loc-kicker">LOCATION</div>
+          <h2 id="loc-name">서재</h2>
+        </div>
+        <div class="log" id="log"></div>
+        <div class="actions" id="actions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="intro-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+    <div class="modal-inner">
+      <div class="kicker mono">CASE BRIEFING</div>
+      <h2 id="intro-title">안개관 살인 사건</h2>
+      <p>어느 가을밤, 폭우가 쏟아지던 시각. 사업가 강태호가 자신의 저택 '안개관'에서 열린 만찬 도중 서재에서 싸늘한 시신으로 발견되었다.</p>
+      <p>그날 저택에 있던 사람은 단 넷 — 아내 이수진, 동업자 박정민, 아들 오세훈, 그리고 삼십 년을 함께한 집사 김도현. 폭우로 길이 끊겨 아무도 저택을 벗어나지 못했다. 범인은 지금도 이 안에 있다.</p>
+      <p>당신은 이 사건을 맡은 형사다. 여섯 개의 방을 돌아보며 단서를 모으고, 용의자들의 말을 들어라. 증거가 충분히 모이면 범인을 지목해 사건을 종결할 수 있다.</p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="start-btn">수사를 시작한다</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="accuse-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accuse-title">
+    <div class="modal-inner">
+      <div class="kicker mono">사건 종결 신청</div>
+      <h2 id="accuse-title">누구를, 무엇으로 지목하는가</h2>
+      <p style="font-size:13px; color:var(--ink-soft);">용의자 한 명과, 그를 지목할 근거가 되는 증거를 최대 3개까지 선택하라. 확신이 없다면 방을 더 돌아보는 편이 낫다.</p>
+
+      <div class="field-title">용의자 선택</div>
+      <div class="suspect-pick" id="suspect-pick"></div>
+
+      <div class="field-title">제시할 증거 (최대 3개)</div>
+      <div class="evidence-pick" id="evidence-pick"></div>
+      <p class="pick-hint" id="pick-hint">증거를 아직 확보하지 못했다면 목록이 비어 있을 수 있다.</p>
+
+      <div id="verdict-box"></div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" id="submit-accuse">지목한다</button>
+        <button class="btn-primary" id="replay-btn" hidden>새 사건 다시 수사하기</button>
+        <button class="btn-ghost" id="cancel-accuse">취소하고 계속 수사</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="clue-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="clue-title">
+    <div class="modal-inner">
+      <div class="kicker mono" id="clue-tag">증거</div>
+      <h2 id="clue-title">단서</h2>
+      <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;" id="clue-where"></p>
+      <p id="clue-text"></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="close-clue">닫는다</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var LOCATIONS = {
+    study: {
+      name:"서재", sub:"범행 현장", kicker:"STUDY — CRIME SCENE",
+      flavor:"강태호가 발견된 곳이다. 벽난로는 이미 꺼졌고, 방 안에는 아직 술 냄새와 차가운 공기가 남아 있다. 카펫 위에 넘어진 의자 하나가 그날 밤을 말해주는 듯하다.",
+      items:[
+        {id:"glass", label:"깨진 와인잔 살피기", tag:"증거 01", text:"바닥에 떨어져 깨진 와인잔. 잔 바닥에 남은 얼룩에서 희미하게 씁쓸한 아몬드 냄새가 난다. 흔한 취기의 냄새는 아니다."},
+        {id:"letter", label:"반쯤 탄 편지 살피기", tag:"증거 02", text:"벽난로 옆에서 타다 만 편지 한 장을 발견했다. “…자네가 회사 자금에 손댄 걸 알고 있네. 이번 주 안으로 해명하지 않으면…” 나머지는 재가 되어 사라졌다. 수신인은 알 수 없지만, 필체는 강태호의 것이다."},
+        {id:"clock", label:"멈춘 괘종시계 살피기", tag:"증거 03", text:"벽에 걸린 괘종시계가 9시 15분에 멈춰 있다. 정전이었을까, 누군가 손을 댄 걸까. 어느 쪽이든 그 시각이 이 사건의 중심에 있다."}
+      ]
+    },
+    dining: {
+      name:"다이닝룸", sub:"만찬장", kicker:"DINING ROOM",
+      flavor:"긴 식탁 위에는 아직 치우지 못한 그날의 만찬 흔적이 남아 있다. 촛농이 굳어 있는 촛대, 반쯤 남은 와인병들. 창밖에서는 여전히 빗소리가 들린다.",
+      items:[
+        {id:"seating", label:"좌석 배치도 살피기", tag:"증거 04", text:"그날의 좌석표를 찾았다. 강태호를 중심으로 이수진, 박정민, 오세훈, 김도현 순으로 앉았다. 넷 모두 만찬에 참석했다는 사실이 확인된다."},
+        {id:"winebottle", label:"와인병 살피기", tag:"증거 05", text:"라벨이 거칠게 뜯겨 나간 와인병 하나가 눈에 띈다. 누군가 급히 상표를 확인하려 했던 흔적처럼 보인다."}
+      ]
+    },
+    kitchen: {
+      name:"주방", sub:"", kicker:"KITCHEN",
+      flavor:"식기가 가지런히 정리된 조용한 주방. 화덕의 온기는 아직 다 식지 않았다. 한쪽 선반에는 오래된 책 몇 권이 꽂혀 있다.",
+      items:[
+        {id:"poisonbook", label:"독초 도감 살피기", tag:"증거 06", text:"낡은 독초 도감에서 '살구씨' 페이지가 접혀 있다. “다량 섭취 시 청산가리와 유사한 중독 증상을 일으키며, 특유의 씁쓸한 아몬드 향이 남는다” — 서재의 와인잔에서 맡았던 그 냄새다."},
+        {id:"teacup", label:"씻지 않은 찻잔 살피기", tag:"증거 07", text:"손님용 잔들과는 다른, 씻지 않은 찻잔 하나가 싱크대 구석에 놓여 있다. 만찬 중에는 쓰지 않았을 잔이다. 누가, 언제 썼을까."}
+      ]
+    },
+    garden: {
+      name:"정원", sub:"", kicker:"GARDEN",
+      flavor:"비에 젖은 정원. 서재 창문 아래로 진흙이 깊게 패어 있다. 담배 냄새가 옅게 남아 있다.",
+      items:[
+        {id:"footprint", label:"진흙 발자국 살피기", tag:"증거 08", text:"서재 창문 바로 아래, 진흙에 찍힌 구두 자국. 손님들의 화려한 구두가 아니라, 저택 직원들이 신는 투박한 정장 구두와 같은 크기다."},
+        {id:"cigarette", label:"담배꽁초 살피기", tag:"증거 09", text:"벤치 옆에 담배꽁초 몇 개비. 저택에서 파는 브랜드는 아니다. 화가 나서 몰래 피운 손님의 것일 가능성이 커 보인다."}
+      ]
+    },
+    bedroom: {
+      name:"강태호의 침실", sub:"", kicker:"MASTER BEDROOM",
+      flavor:"주인을 잃은 방은 유난히 넓고 조용하다. 책상 서랍 하나가 반쯤 열린 채였다.",
+      items:[
+        {id:"will", label:"유언장 초안 살피기", tag:"증거 10", text:"서랍 속에서 서명되지 않은 유언장 초안을 찾았다. 아들 오세훈을 상속에서 제외하고, 재산 대부분을 재단에 기부한다는 내용이다."},
+        {id:"photo", label:"낡은 사진과 편지 살피기", tag:"증거 11", text:"금고 안쪽, 30년 전으로 보이는 빛바랜 사진 한 장과 편지가 있다. 사진 뒷면에는 “용서를 구합니다”라는 문구와 함께, 지금과는 다른 이름의 서명이 적혀 있다. 그 이름의 필체가 어딘가 낯익다."}
+      ]
+    },
+    parlor: {
+      name:"응접실", sub:"", kicker:"DRAWING ROOM",
+      flavor:"만찬 후 손님들이 잠시 머물렀던 방. 술병과 잔이 어지럽게 놓여 있다.",
+      items:[
+        {id:"maidnote", label:"하녀의 메모 살피기", tag:"증거 12", text:"하녀가 남긴 짧은 메모를 찾았다. “9시경, 서재 쪽에서 언성이 높아지는 소리를 들었다. 남자 목소리였다.”"}
+      ]
+    }
+  };
+
+  var LOC_ORDER = ["study","dining","kitchen","garden","bedroom","parlor"];
+
+  var SUSPECTS = {
+    wife:{ name:"이수진", role:"아내 · 34세", loc:"bedroom",
+      lines:[
+        {text:"“그이와 저는… 요즘 서먹했어요. 하지만 죽일 이유는 없어요. 유언장이 바뀌는 것도 오늘 처음 알았는걸요.”"},
+        {text:"“저녁 내내 다이닝룸에 있었어요. 그이가 서재로 간 뒤로는… 못 봤어요. 정말이에요.”"}
+      ]},
+    partner:{ name:"박정민", role:"동업자 · 45세", loc:"parlor",
+      lines:[
+        {text:"“자금 문제요? 오해입니다. 태호와는 그저 이야기를 나누러 서재에 갔을 뿐이에요. 9시쯤이었나…”"},
+        {text:"“예, 언성이 좀 높아지긴 했죠. 하지만 제가 방을 나올 때 그는… 멀쩡히 살아 있었습니다. 맹세컨대.”"}
+      ]},
+    butler:{ name:"김도현", role:"집사 · 58세", loc:"kitchen",
+      lines:[
+        {text:"“저는 그저 저녁 시중을 들었을 뿐입니다. 정원엔… 잠깐 바람을 쐬러 나갔던 것뿐이고요.”"},
+        {text:"“독초 도감이요? 손님들 안전을 위해 확인차 본 겁니다. 그뿐이에요.” 그의 손끝이 미세하게 떨리고 있었다.", requires:["poisonbook"]},
+        {text:"그 낡은 사진 이야기를 꺼내자 그의 표정이 굳었다. “…그걸 어디서. 삼십 년 전 일입니다. 이미 다 끝난 일이라 생각했는데.”", requires:["photo"]}
+      ]},
+    son:{ name:"오세훈", role:"아들 · 29세", loc:"garden",
+      lines:[
+        {text:"“아버지와는 사이가 안 좋았죠, 다들 알다시피. 하지만 죽이고 싶었던 건 아버지의 돈이 아니라 인정이었어요.”"},
+        {text:"“담배요? 제 겁니다. 화가 나서 정원에 나와 몇 대 피웠어요. 그게 다예요.”", requires:["cigarette"]}
+      ]}
+  };
+
+  function suspectLineLocked(line){
+    return !!(line.requires && !line.requires.every(function(id){ return !!state.collected[id]; }));
+  }
+
+  var KEY_EVIDENCE = ["footprint","poisonbook","photo"];
+  var CULPRIT = "butler";
+
+  var state = {
+    collected:{},
+    talked:{},
+    current:"study",
+    closed:false
+  };
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  function totalClueCount(){
+    var n=0;
+    LOC_ORDER.forEach(function(l){ n += LOCATIONS[l].items.length; });
+    return n;
+  }
+  var TOTAL_CLUES = totalClueCount();
+
+  function collectedCount(){
+    return Object.keys(state.collected).length;
+  }
+
+  function findClueMeta(id){
+    for(var l in LOCATIONS){
+      var it = LOCATIONS[l].items.find(function(i){return i.id===id;});
+      if(it) return it;
+    }
+    return null;
+  }
+
+  function findClueLocationName(id){
+    for(var l in LOCATIONS){
+      if(LOCATIONS[l].items.some(function(i){return i.id===id;})) return LOCATIONS[l].name;
+    }
+    return "";
+  }
+
+  function appendLog(type, headHtml, bodyText){
+    var log = $("log");
+    var div = document.createElement("div");
+    div.className = "entry " + type;
+    var html = "";
+    if(headHtml) html += '<div class="head">'+headHtml+'</div>';
+    html += "<p>"+bodyText+"</p>";
+    div.innerHTML = html;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function renderLocGrid(){
+    var grid = $("loc-grid");
+    grid.innerHTML = "";
+    LOC_ORDER.forEach(function(id){
+      var loc = LOCATIONS[id];
+      var btn = document.createElement("button");
+      btn.className = "loc-btn";
+      btn.setAttribute("aria-current", id===state.current ? "true":"false");
+      var allFound = loc.items.every(function(i){return state.collected[i.id];});
+      btn.innerHTML = loc.name + (loc.sub? '<span class="sub">'+loc.sub+'</span>':'') + (allFound?'<span class="flag" title="단서 확보 완료"></span>':'');
+      btn.addEventListener("click", function(){ goTo(id); });
+      grid.appendChild(btn);
+    });
+  }
+
+  function renderSuspects(){
+    [$("suspect-list"), $("suspect-list-m")].forEach(function(container){
+      if(!container) return;
+      container.innerHTML = "";
+      Object.keys(SUSPECTS).forEach(function(sid){
+        var s = SUSPECTS[sid];
+        var row = document.createElement("button");
+        row.className = "suspect-row";
+        row.innerHTML = '<span class="mugshot">'+s.name.charAt(0)+'</span><span class="suspect-meta"><span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span></span>';
+        row.addEventListener("click", function(){ goTo(s.loc); });
+        container.appendChild(row);
+      });
+    });
+  }
+
+  function renderEvidenceLocker(){
+    var count = collectedCount();
+    $("ev-count-top").textContent = count;
+    [$("ev-count"), $("ev-count-m")].forEach(function(el){ if(el) el.textContent = count+"/"+TOTAL_CLUES; });
+    [$("ev-locker"), $("ev-locker-m")].forEach(function(container){
+      if(!container) return;
+      container.innerHTML = "";
+      if(count===0){
+        container.innerHTML = '<div class="ev-empty">아직 확보한 증거가 없다.</div>';
+        return;
+      }
+      Object.keys(state.collected).forEach(function(id){
+        var meta = findClueMeta(id);
+        if(!meta) return;
+        var btn = document.createElement("button");
+        btn.className = "ev-chip";
+        btn.innerHTML = '<span class="tag mono">'+meta.tag+'</span><span>'+meta.label.replace(" 살피기","")+'</span>';
+        btn.addEventListener("click", function(){ openClueDetail(id); });
+        container.appendChild(btn);
+      });
+    });
+  }
+
+  function renderActions(){
+    var loc = LOCATIONS[state.current];
+    var wrap = $("actions");
+    wrap.innerHTML = "";
+
+    loc.items.forEach(function(item){
+      var btn = document.createElement("button");
+      var done = !!state.collected[item.id];
+      btn.className = "act-btn" + (done? " done":"");
+      btn.textContent = done ? ("다시 보기 · "+item.label.replace(" 살피기","")) : item.label;
+      btn.addEventListener("click", function(){ examine(item.id); });
+      wrap.appendChild(btn);
+    });
+
+    var suspectHere = Object.keys(SUSPECTS).find(function(sid){ return SUSPECTS[sid].loc===state.current; });
+    if(suspectHere){
+      var s = SUSPECTS[suspectHere];
+      var idx = state.talked[suspectHere] || 0;
+      var btn = document.createElement("button");
+      btn.className = "act-btn talk";
+      if(idx >= s.lines.length){
+        btn.textContent = s.name + " · 더 할 말이 없어 보인다";
+        btn.disabled = true;
+      } else if(suspectLineLocked(s.lines[idx])){
+        btn.textContent = s.name + " · 더 캐물으려면 다른 단서가 필요해 보인다";
+        btn.disabled = true;
+      } else {
+        btn.textContent = (idx===0 ? "심문하기 — " : "더 묻는다 — ") + s.name;
+        btn.addEventListener("click", function(){ talk(suspectHere); });
+      }
+      wrap.appendChild(btn);
+    }
+  }
+
+  function goTo(id){
+    state.current = id;
+    var loc = LOCATIONS[id];
+    $("loc-kicker").textContent = loc.kicker;
+    $("loc-name").textContent = loc.name;
+    appendLog("location", '<span class="mono">'+loc.kicker+'</span>', loc.flavor);
+    renderLocGrid();
+    renderActions();
+  }
+
+  function examine(itemId){
+    var loc = LOCATIONS[state.current];
+    var item = loc.items.find(function(i){return i.id===itemId;});
+    if(!item) return;
+    state.collected[itemId] = true;
+    appendLog("clue", '<span class="mono">'+item.tag+'</span> '+item.label.replace(" 살피기",""), item.text);
+    renderLocGrid();
+    renderEvidenceLocker();
+    renderActions();
+  }
+
+  function talk(sid){
+    var s = SUSPECTS[sid];
+    var idx = state.talked[sid] || 0;
+    if(idx >= s.lines.length) return;
+    var line = s.lines[idx];
+    if(suspectLineLocked(line)) return;
+    appendLog("speech", s.name+" · "+s.role, line.text);
+    state.talked[sid] = idx+1;
+    renderActions();
+  }
+
+  // ---------- clue detail modal ----------
+  function openClueDetail(id){
+    var meta = findClueMeta(id);
+    if(!meta) return;
+    $("clue-tag").textContent = meta.tag;
+    $("clue-title").textContent = meta.label.replace(" 살피기","");
+    $("clue-where").textContent = findClueLocationName(id) + "에서 발견";
+    $("clue-text").textContent = meta.text;
+    $("clue-overlay").hidden = false;
+  }
+
+  // ---------- notes ----------
+  var NOTES_KEY = "anggaegwan_notes";
+
+  function loadNotes(){
+    var ta = $("notes");
+    try{
+      var saved = localStorage.getItem(NOTES_KEY);
+      if(saved !== null) ta.value = saved;
+    }catch(e){}
+  }
+
+  function saveNotes(){
+    try{ localStorage.setItem(NOTES_KEY, $("notes").value); }catch(e){}
+  }
+
+  // ---------- accusation modal ----------
+  var pickedSuspect = null;
+  var pickedEvidence = [];
+
+  function winVerdictHtml(){
+    return '<div class="verdict win"><div class="kicker mono">사건 종결</div>' +
+      '<p>당신은 증거를 하나씩 책상 위에 내려놓았다. 진흙 발자국, 접혀 있던 독초 도감의 페이지, 그리고 삼십 년 전의 낡은 사진. 김도현의 손이 떨리기 시작했다.</p>' +
+      '<p>“…어떻게, 어떻게 아신 겁니까.” 그는 결국 무너져 내렸다. 삼십 년 전, 강태호의 방관 속에서 여동생을 잃었던 일. 그리고 최근 그 사실을 빌미로 자신을 해고하려던 강태호에게, 살구씨에서 얻은 독을 와인에 섞어 넣었다는 사실을 털어놓았다. 손님용과 따로 쓴 찻잔도, 몰래 뜯어본 와인 라벨도 — 혹시 모를 실수를 자신조차 두려워했던 흔적이었다.</p>' +
+      '<p style="color:var(--ink-soft); font-size:13px;">— 안개관 살인 사건, 종결되다.</p></div>';
+  }
+
+  function openAccuse(){
+    $("accuse-overlay").hidden = false;
+
+    if(state.closed){
+      $("suspect-pick").innerHTML = "";
+      $("evidence-pick").innerHTML = "";
+      $("pick-hint").textContent = "사건은 이미 종결되었다.";
+      $("verdict-box").innerHTML = winVerdictHtml();
+      $("submit-accuse").hidden = true;
+      $("replay-btn").hidden = false;
+      $("cancel-accuse").textContent = "닫는다";
+      return;
+    }
+
+    pickedSuspect = null;
+    pickedEvidence = [];
+    $("verdict-box").innerHTML = "";
+    $("submit-accuse").hidden = false;
+    $("replay-btn").hidden = true;
+    $("cancel-accuse").textContent = "취소하고 계속 수사";
+    renderSuspectPick();
+    renderEvidencePick();
+  }
+
+  function renderSuspectPick(){
+    var wrap = $("suspect-pick");
+    wrap.innerHTML = "";
+    Object.keys(SUSPECTS).forEach(function(sid){
+      var s = SUSPECTS[sid];
+      var card = document.createElement("button");
+      card.className = "pick-card";
+      card.setAttribute("aria-pressed", pickedSuspect===sid ? "true":"false");
+      card.innerHTML = '<span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span>';
+      card.addEventListener("click", function(){ pickedSuspect = sid; renderSuspectPick(); });
+      wrap.appendChild(card);
+    });
+  }
+
+  function renderEvidencePick(){
+    var wrap = $("evidence-pick");
+    wrap.innerHTML = "";
+    var ids = Object.keys(state.collected);
+    if(ids.length===0){
+      $("pick-hint").textContent = "아직 확보한 증거가 없다. 저택을 더 조사해야 한다.";
+    } else {
+      $("pick-hint").textContent = "최대 3개까지 선택할 수 있다. ("+pickedEvidence.length+"/3)";
+    }
+    ids.forEach(function(id){
+      var meta = findClueMeta(id);
+      if(!meta) return;
+      var row = document.createElement("button");
+      row.className = "ev-pick-row";
+      var picked = pickedEvidence.indexOf(id) !== -1;
+      row.setAttribute("aria-pressed", picked ? "true":"false");
+      row.innerHTML = '<span class="box"></span><span class="mono" style="color:var(--amber); font-size:11px;">'+meta.tag+'</span><span>'+meta.label.replace(" 살피기","")+'</span>';
+      row.addEventListener("click", function(){
+        var i = pickedEvidence.indexOf(id);
+        if(i!==-1){ pickedEvidence.splice(i,1); }
+        else if(pickedEvidence.length<3){ pickedEvidence.push(id); }
+        renderEvidencePick();
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  function submitAccuse(){
+    if(!pickedSuspect){
+      $("verdict-box").innerHTML = '<p class="pick-hint" style="color:var(--blood);">용의자를 먼저 선택하라.</p>';
+      return;
+    }
+    var keyHits = pickedEvidence.filter(function(id){ return KEY_EVIDENCE.indexOf(id)!==-1; }).length;
+    var box = $("verdict-box");
+    var s = SUSPECTS[pickedSuspect];
+
+    if(pickedSuspect===CULPRIT && keyHits>=2){
+      box.innerHTML = winVerdictHtml();
+      state.closed = true;
+      $("case-status").textContent = "사건 종결";
+      $("accuse-open").textContent = "사건 종결됨 · 기록 보기";
+      $("submit-accuse").hidden = true;
+      $("replay-btn").hidden = false;
+      $("cancel-accuse").textContent = "닫는다";
+    } else if(pickedSuspect===CULPRIT){
+      box.innerHTML =
+        '<div class="verdict lose"><div class="kicker mono">증거 불충분</div>' +
+        '<p>당신의 추리는 옳은 방향을 가리키고 있다. 하지만 '+s.name+'은(는) 침착하게 혐의를 부인했다. “증거가… 있습니까?” 더 확실한 물증이 필요하다.</p></div>';
+    } else {
+      box.innerHTML =
+        '<div class="verdict lose"><div class="kicker mono">오판</div>' +
+        '<p>당신의 주장은 근거가 부족했다. '+s.name+'은(는) 당황하며 결백을 주장했고, 사건은 다시 미궁 속으로 빠져들었다. 진범은 여전히 저택 어딘가에 남아 있다.</p></div>';
+    }
+  }
+
+  // ---------- wire up ----------
+  document.addEventListener("DOMContentLoaded", function(){
+    renderLocGrid();
+    renderSuspects();
+    renderEvidenceLocker();
+    loadNotes();
+    $("ev-total-top").textContent = TOTAL_CLUES;
+
+    $("start-btn").addEventListener("click", function(){
+      $("intro-overlay").hidden = true;
+      goTo("study");
+    });
+
+    $("accuse-open").addEventListener("click", openAccuse);
+    $("cancel-accuse").addEventListener("click", function(){ $("accuse-overlay").hidden = true; });
+    $("submit-accuse").addEventListener("click", submitAccuse);
+    $("replay-btn").addEventListener("click", function(){ location.reload(); });
+    $("close-clue").addEventListener("click", function(){ $("clue-overlay").hidden = true; });
+    $("notes").addEventListener("input", saveNotes);
+
+    // dismissible overlays: backdrop click + Escape (intro is excluded — it must be started explicitly)
+    ["accuse-overlay","clue-overlay"].forEach(function(id){
+      var el = $(id);
+      el.addEventListener("click", function(e){ if(e.target === el) el.hidden = true; });
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key !== "Escape") return;
+      ["accuse-overlay","clue-overlay"].forEach(function(id){
+        var el = $(id);
+        if(!el.hidden) el.hidden = true;
+      });
+    });
+  });
+})();
+</script>
