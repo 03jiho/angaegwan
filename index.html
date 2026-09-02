@@ -171,10 +171,37 @@
     font-family:'Song Myung',serif;
     font-size:16px;
     color:var(--amber);
+    padding:4px;
   }
+  .portrait-svg{width:100%; height:100%; display:block; color:inherit;}
   .suspect-meta{display:flex; flex-direction:column; line-height:1.3;}
   .suspect-meta .nm{font-size:13px; color:var(--text-hi);}
   .suspect-meta .rl{font-size:10.5px; color:var(--ink-soft); letter-spacing:.04em;}
+
+  .log-portrait{
+    display:inline-flex; width:20px; height:20px; vertical-align:-5px; margin-right:6px;
+    color:var(--blood); flex:none;
+  }
+  .entry.confront .head{color:var(--blood);}
+  .entry.confront{border-left:2px solid var(--blood); padding-left:12px; background:rgba(154,61,47,.06);}
+  .entry.confront p{font-style:italic;}
+
+  .act-btn.present{border-color:var(--amber); color:var(--amber-bright); background:#fbf3e4;}
+  .act-btn.present:hover{background:#f6ecd3;}
+
+  .evidence-card{
+    display:flex; align-items:flex-start; gap:14px; margin-bottom:6px;
+  }
+  .evidence-card-text{flex:1 1 auto; min-width:0;}
+  .evidence-card-text h2{margin:4px 0 4px;}
+  .clue-icon-wrap{
+    flex:none; width:56px; height:56px; padding:8px;
+    background:#fbf6ea; border:1px solid var(--panel-shadow); border-radius:2px;
+    color:var(--blood);
+    box-shadow:0 6px 14px -8px rgba(0,0,0,.35);
+  }
+  .clue-icon-wrap svg{width:100%; height:100%;}
+  .ev-icon-svg{width:100%; height:100%;}
 
   .evidence-locker{display:flex; flex-direction:column; gap:6px;}
   .ev-chip{
@@ -379,6 +406,7 @@
   }
   .suspect-pick{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .pick-card{
+    display:flex; align-items:center; gap:10px;
     border:1px solid var(--panel-shadow);
     background:#fbf6ea;
     border-radius:2px;
@@ -387,6 +415,7 @@
     font-size:13px;
     color:var(--ink);
   }
+  .pick-mugshot{background:linear-gradient(160deg,#e9dfc4,#d9c9a1); color:var(--blood); border-color:var(--panel-shadow);}
   .pick-card .nm{font-weight:600; display:block;}
   .pick-card .rl{font-size:11px; color:var(--ink-soft);}
   .pick-card[aria-pressed="true"]{border-color:var(--blood); background:#f6e2dd; box-shadow:0 0 0 1px var(--blood) inset;}
@@ -457,7 +486,7 @@
       <div class="case-no mono">CASE FILE — 안개관 실종의 밤</div>
       <h1>안개관</h1>
     </div>
-    <div class="status">수집한 증거 <b id="ev-count-top">0</b> / <b id="ev-total-top">12</b><br>사건 상태 <b id="case-status">수사 중</b></div>
+    <div class="status">수집한 증거 <b id="ev-count-top">0</b> / <b id="ev-total-top">20</b><br>사건 상태 <b id="case-status">수사 중</b></div>
   </header>
 
   <div class="stage">
@@ -480,7 +509,7 @@
           <div class="suspect-list" id="suspect-list-m"></div>
         </div>
         <div class="side-block">
-          <p class="side-title">증거함 <span class="count mono" id="ev-count-m">0/12</span></p>
+          <p class="side-title">증거함 <span class="count mono" id="ev-count-m">0/20</span></p>
           <div class="evidence-locker" id="ev-locker-m"></div>
         </div>
       </details>
@@ -491,7 +520,7 @@
       </div>
 
       <div class="side-block desktop-evidence">
-        <p class="side-title">증거함 <span class="count mono" id="ev-count">0/12</span></p>
+        <p class="side-title">증거함 <span class="count mono" id="ev-count">0/20</span></p>
         <div class="evidence-locker" id="ev-locker"></div>
       </div>
 
@@ -518,7 +547,7 @@
       <h2 id="intro-title">안개관 살인 사건</h2>
       <p>어느 가을밤, 폭우가 쏟아지던 시각. 사업가 강태호가 자신의 저택 '안개관'에서 열린 만찬 도중 서재에서 싸늘한 시신으로 발견되었다.</p>
       <p>그날 저택에 있던 사람은 단 넷 — 아내 이수진, 동업자 박정민, 아들 오세훈, 그리고 삼십 년을 함께한 집사 김도현. 폭우로 길이 끊겨 아무도 저택을 벗어나지 못했다. 범인은 지금도 이 안에 있다.</p>
-      <p>당신은 이 사건을 맡은 형사다. 여섯 개의 방을 돌아보며 단서를 모으고, 용의자들의 말을 들어라. 증거가 충분히 모이면 범인을 지목해 사건을 종결할 수 있다.</p>
+      <p>당신은 이 사건을 맡은 형사다. 여섯 개의 방을 돌아보며 단서를 모으고, 용의자들의 말을 들어라. 하지만 듣는 것만으로는 부족하다 — 확보한 증거를 용의자 앞에 직접 들이밀어라. 그들의 말이 흔들리는 순간, 진실에 한 걸음 다가설 수 있다. 처음엔 넷 모두가 의심스러워 보일 것이다. 시간과 알리바이를 하나씩 겹쳐보면, 결국 단 한 사람만 남는다.</p>
       <div class="modal-actions">
         <button class="btn-primary" id="start-btn">수사를 시작한다</button>
       </div>
@@ -531,12 +560,12 @@
     <div class="modal-inner">
       <div class="kicker mono">사건 종결 신청</div>
       <h2 id="accuse-title">누구를, 무엇으로 지목하는가</h2>
-      <p style="font-size:13px; color:var(--ink-soft);">용의자 한 명과, 그를 지목할 근거가 되는 증거를 최대 3개까지 선택하라. 확신이 없다면 방을 더 돌아보는 편이 낫다.</p>
+      <p style="font-size:13px; color:var(--ink-soft);">용의자 한 명과, 그를 지목할 근거가 되는 증거를 최대 4개까지 선택하라. 확신이 없다면 방을 더 돌아보거나, 용의자에게 증거를 직접 들이밀어 반응을 살피는 편이 낫다.</p>
 
       <div class="field-title">용의자 선택</div>
       <div class="suspect-pick" id="suspect-pick"></div>
 
-      <div class="field-title">제시할 증거 (최대 3개)</div>
+      <div class="field-title">제시할 증거 (최대 4개)</div>
       <div class="evidence-pick" id="evidence-pick"></div>
       <p class="pick-hint" id="pick-hint">증거를 아직 확보하지 못했다면 목록이 비어 있을 수 있다.</p>
 
@@ -554,12 +583,31 @@
 <div class="overlay" id="clue-overlay" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="clue-title">
     <div class="modal-inner">
-      <div class="kicker mono" id="clue-tag">증거</div>
-      <h2 id="clue-title">단서</h2>
-      <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;" id="clue-where"></p>
+      <div class="evidence-card">
+        <div class="clue-icon-wrap" id="clue-icon"></div>
+        <div class="evidence-card-text">
+          <div class="kicker mono" id="clue-tag">증거</div>
+          <h2 id="clue-title">단서</h2>
+          <p style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin:0;" id="clue-where"></p>
+        </div>
+      </div>
       <p id="clue-text"></p>
       <div class="modal-actions">
         <button class="btn-ghost" id="close-clue">닫는다</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="confront-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confront-title">
+    <div class="modal-inner">
+      <div class="kicker mono">증거 제시</div>
+      <h2 id="confront-title">증거를 들이민다</h2>
+      <p style="font-size:13px; color:var(--ink-soft);">확보한 증거 중 하나를 선택해 상대에게 들이밀어라. 정곡을 찌르면 말이 흔들릴 것이다.</p>
+      <div class="evidence-pick" id="confront-pick"></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="close-confront">그만둔다</button>
       </div>
     </div>
   </div>
@@ -574,48 +622,56 @@
       name:"서재", sub:"범행 현장", kicker:"STUDY — CRIME SCENE",
       flavor:"강태호가 발견된 곳이다. 벽난로는 이미 꺼졌고, 방 안에는 아직 술 냄새와 차가운 공기가 남아 있다. 카펫 위에 넘어진 의자 하나가 그날 밤을 말해주는 듯하다.",
       items:[
-        {id:"glass", label:"깨진 와인잔 살피기", tag:"증거 01", text:"바닥에 떨어져 깨진 와인잔. 잔 바닥에 남은 얼룩에서 희미하게 씁쓸한 아몬드 냄새가 난다. 흔한 취기의 냄새는 아니다."},
-        {id:"letter", label:"반쯤 탄 편지 살피기", tag:"증거 02", text:"벽난로 옆에서 타다 만 편지 한 장을 발견했다. “…자네가 회사 자금에 손댄 걸 알고 있네. 이번 주 안으로 해명하지 않으면…” 나머지는 재가 되어 사라졌다. 수신인은 알 수 없지만, 필체는 강태호의 것이다."},
-        {id:"clock", label:"멈춘 괘종시계 살피기", tag:"증거 03", text:"벽에 걸린 괘종시계가 9시 15분에 멈춰 있다. 정전이었을까, 누군가 손을 댄 걸까. 어느 쪽이든 그 시각이 이 사건의 중심에 있다."}
+        {id:"glass", label:"깨진 와인잔 살피기", tag:"증거 01", icon:"glass", text:"바닥에 떨어져 깨진 와인잔. 잔 바닥에 남은 얼룩에서 희미하게 씁쓸한 아몬드 냄새가 난다. 흔한 취기의 냄새는 아니다."},
+        {id:"letter", label:"반쯤 탄 편지 살피기", tag:"증거 02", icon:"letter", text:"벽난로 옆에서 타다 만 편지 한 장을 발견했다. “…자네가 회사 자금에 손댄 걸 알고 있네. 이번 주 안으로 해명하지 않으면…” 나머지는 재가 되어 사라졌다. 수신인은 알 수 없지만, 필체는 강태호의 것이다."},
+        {id:"clock", label:"멈춘 괘종시계 살피기", tag:"증거 03", icon:"clock", text:"벽에 걸린 괘종시계가 9시 15분에 멈춰 있다. 정전이었을까, 누군가 손을 댄 걸까. 어느 쪽이든 그 시각이 이 사건의 중심에 있다."},
+        {id:"autopsy", label:"검시관의 예비 소견서 살피기", tag:"증거 04", icon:"document", text:"책상 위에 놓인 예비 소견서. “위 내용물의 소화 정도로 미루어 사망 추정 시각은 오후 9시 20분에서 9시 30분 사이. 사인은 청산가리 유사 독성 물질에 의한 중독으로 추정됨.” 괘종시계가 멈춘 9시 15분보다 조금 뒤다 — 몸싸움과 죽음이 같은 순간은 아니었을지도 모른다."}
       ]
     },
     dining: {
       name:"다이닝룸", sub:"만찬장", kicker:"DINING ROOM",
       flavor:"긴 식탁 위에는 아직 치우지 못한 그날의 만찬 흔적이 남아 있다. 촛농이 굳어 있는 촛대, 반쯤 남은 와인병들. 창밖에서는 여전히 빗소리가 들린다.",
       items:[
-        {id:"seating", label:"좌석 배치도 살피기", tag:"증거 04", text:"그날의 좌석표를 찾았다. 강태호를 중심으로 이수진, 박정민, 오세훈, 김도현 순으로 앉았다. 넷 모두 만찬에 참석했다는 사실이 확인된다."},
-        {id:"winebottle", label:"와인병 살피기", tag:"증거 05", text:"라벨이 거칠게 뜯겨 나간 와인병 하나가 눈에 띈다. 누군가 급히 상표를 확인하려 했던 흔적처럼 보인다."}
+        {id:"seating", label:"좌석 배치도 살피기", tag:"증거 05", icon:"document", text:"그날의 좌석표를 찾았다. 강태호를 중심으로 이수진, 박정민, 오세훈, 김도현 순으로 앉았다. 넷 모두 만찬에 참석했다는 사실이 확인된다."},
+        {id:"winebottle", label:"와인병 살피기", tag:"증거 06", icon:"glass", text:"라벨이 거칠게 뜯겨 나간 와인병 하나가 눈에 띈다. 누군가 급히 상표를 확인하려 했던 흔적처럼 보인다."},
+        {id:"terracelog", label:"테라스 문 잠금 기록 살피기", tag:"증거 07", icon:"sensor", text:"테라스로 통하는 문의 자동 잠금 기록판. 그날 저녁 단 한 번, 9시 10분에 열렸다가 9시 12분에 다시 닫힌 기록이 남아 있다. 채 2분이 되지 않는 시간이다."},
+        {id:"servetime", label:"서빙 메모 살피기", tag:"증거 08", icon:"document", text:"구겨진 서빙 메모. 만찬은 8시 40분에 시작해, 9시 무렵 디저트가 나갔다고 적혀 있다. 디저트가 나간 뒤로는 다들 하나둘 자리를 뜨기 시작했을 시간이다."}
       ]
     },
     kitchen: {
       name:"주방", sub:"", kicker:"KITCHEN",
       flavor:"식기가 가지런히 정리된 조용한 주방. 화덕의 온기는 아직 다 식지 않았다. 한쪽 선반에는 오래된 책 몇 권이 꽂혀 있다.",
       items:[
-        {id:"poisonbook", label:"독초 도감 살피기", tag:"증거 06", text:"낡은 독초 도감에서 '살구씨' 페이지가 접혀 있다. “다량 섭취 시 청산가리와 유사한 중독 증상을 일으키며, 특유의 씁쓸한 아몬드 향이 남는다” — 서재의 와인잔에서 맡았던 그 냄새다."},
-        {id:"teacup", label:"씻지 않은 찻잔 살피기", tag:"증거 07", text:"손님용 잔들과는 다른, 씻지 않은 찻잔 하나가 싱크대 구석에 놓여 있다. 만찬 중에는 쓰지 않았을 잔이다. 누가, 언제 썼을까."}
+        {id:"poisonbook", label:"독초 도감 살피기", tag:"증거 09", icon:"book", text:"낡은 독초 도감에서 '살구씨' 페이지가 접혀 있다. “다량 섭취 시 청산가리와 유사한 중독 증상을 일으키며, 특유의 씁쓸한 아몬드 향이 남는다” — 서재의 와인잔에서 맡았던 그 냄새다."},
+        {id:"teacup", label:"씻지 않은 찻잔 살피기", tag:"증거 10", icon:"cup", text:"손님용 잔들과는 다른, 씻지 않은 찻잔 하나가 싱크대 구석에 놓여 있다. 만찬 중에는 쓰지 않았을 잔이다. 누가, 언제 썼을까."},
+        {id:"staffshoes", label:"직원 신발 지급 대장 살피기", tag:"증거 11", icon:"shoe", text:"벽에 걸린 낡은 장부, '직원 신발 지급 대장'. 각자의 정장 구두 치수가 적혀 있다. 집사 김도현, 270mm."}
       ]
     },
     garden: {
       name:"정원", sub:"", kicker:"GARDEN",
       flavor:"비에 젖은 정원. 서재 창문 아래로 진흙이 깊게 패어 있다. 담배 냄새가 옅게 남아 있다.",
       items:[
-        {id:"footprint", label:"진흙 발자국 살피기", tag:"증거 08", text:"서재 창문 바로 아래, 진흙에 찍힌 구두 자국. 손님들의 화려한 구두가 아니라, 저택 직원들이 신는 투박한 정장 구두와 같은 크기다."},
-        {id:"cigarette", label:"담배꽁초 살피기", tag:"증거 09", text:"벤치 옆에 담배꽁초 몇 개비. 저택에서 파는 브랜드는 아니다. 화가 나서 몰래 피운 손님의 것일 가능성이 커 보인다."}
+        {id:"footprint", label:"진흙 발자국 살피기", tag:"증거 12", icon:"footprint", text:"서재 창문 바로 아래, 진흙에 깊게 찍힌 구두 자국. 손님들의 화려한 구두가 아니라 투박한 남성용 정장 구두 — 재보니 270mm 정도다. 그리고 한 자리에 오래 서 있었던 것처럼, 발자국이 유난히 깊고 겹쳐 있다."},
+        {id:"cigarette", label:"담배꽁초 살피기", tag:"증거 13", icon:"cigarette", text:"벤치 옆에 담배꽁초 몇 개비. 저택에서 파는 브랜드는 아니다. 화가 나서 몰래 피운 손님의 것일 가능성이 커 보인다."},
+        {id:"motionlog", label:"정원 조명 센서 기록 살피기", tag:"증거 14", icon:"sensor", text:"정원 등불 옆, 작은 조명 센서 상자가 있다. 기록을 확인해보니 9시 5분부터 9시 35분까지 정원에서 계속 움직임이 감지됐다 — 다만 9시 18분부터 21분 사이, 딱 3분간은 감지가 끊겨 있다."},
+        {id:"gazebo", label:"정자의 젖은 벤치 살피기", tag:"증거 15", icon:"document", text:"정원 안쪽, 작은 정자의 벤치 하나가 유독 젖어 있다. 누군가 비를 피해 잠깐 그곳으로 옮겨 앉았던 흔적처럼 보인다."}
       ]
     },
     bedroom: {
       name:"강태호의 침실", sub:"", kicker:"MASTER BEDROOM",
       flavor:"주인을 잃은 방은 유난히 넓고 조용하다. 책상 서랍 하나가 반쯤 열린 채였다.",
       items:[
-        {id:"will", label:"유언장 초안 살피기", tag:"증거 10", text:"서랍 속에서 서명되지 않은 유언장 초안을 찾았다. 아들 오세훈을 상속에서 제외하고, 재산 대부분을 재단에 기부한다는 내용이다."},
-        {id:"photo", label:"낡은 사진과 편지 살피기", tag:"증거 11", text:"금고 안쪽, 30년 전으로 보이는 빛바랜 사진 한 장과 편지가 있다. 사진 뒷면에는 “용서를 구합니다”라는 문구와 함께, 지금과는 다른 이름의 서명이 적혀 있다. 그 이름의 필체가 어딘가 낯익다."}
+        {id:"will", label:"유언장 초안 살피기", tag:"증거 16", icon:"document", text:"서랍 속에서 서명되지 않은 유언장 초안을 찾았다. 아들 오세훈을 상속에서 제외하고, 아내 이수진의 몫도 크게 줄여 재산 대부분을 재단에 기부한다는 내용이다. 작성일은 바로 이번 주다."},
+        {id:"photo", label:"낡은 사진과 편지 살피기", tag:"증거 17", icon:"photo", text:"금고 안쪽, 30년 전으로 보이는 빛바랜 사진 한 장과 편지가 있다. 사진 뒷면에는 “용서를 구합니다”라는 문구와 함께, 지금과는 다른 이름의 서명이 적혀 있다. 그 이름의 필체가 어딘가 낯익다."}
       ]
     },
     parlor: {
       name:"응접실", sub:"", kicker:"DRAWING ROOM",
       flavor:"만찬 후 손님들이 잠시 머물렀던 방. 술병과 잔이 어지럽게 놓여 있다.",
       items:[
-        {id:"maidnote", label:"하녀의 메모 살피기", tag:"증거 12", text:"하녀가 남긴 짧은 메모를 찾았다. “9시경, 서재 쪽에서 언성이 높아지는 소리를 들었다. 남자 목소리였다.”"}
+        {id:"maidnote", label:"하녀의 메모 살피기", tag:"증거 18", icon:"document", text:"하녀가 남긴 짧은 메모를 찾았다. “9시경, 서재 쪽에서 언성이 높아지는 소리를 들었다. 남자 목소리였다.”"},
+        {id:"sonshoes", label:"젖은 구두 살피기", tag:"증거 19", icon:"shoe", text:"응접실 구석, 흠뻑 젖은 구두 한 켤레가 벗어져 있다. 안쪽에 적힌 치수는 265mm — 이름표에는 '오세훈'이라 적혀 있다."},
+        {id:"maidnote2", label:"하녀의 두 번째 메모 살피기", tag:"증거 20", icon:"document", text:"하녀의 두 번째 메모. “9시 22분쯤, 박정민 씨가 복도를 지나 응접실로 들어오는 걸 봤다. 얼굴이 하얗게 질려 있었다.”"}
       ]
     }
   };
@@ -623,35 +679,67 @@
   var LOC_ORDER = ["study","dining","kitchen","garden","bedroom","parlor"];
 
   var SUSPECTS = {
-    wife:{ name:"이수진", role:"아내 · 53세", loc:"bedroom",
+    wife:{ name:"이수진", role:"아내 · 53세", loc:"bedroom", portrait:"wife",
       lines:[
-        {text:"“그이와 저는… 요즘 서먹했어요. 하지만 죽일 이유는 없어요. 유언장이 바뀌는 것도 오늘 처음 알았는걸요.”"},
+        {text:"“그이와 저는… 요즘 서먹했어요. 하지만 죽일 이유는 없어요.”"},
         {text:"“저녁 내내 다이닝룸에 있었어요. 그이가 서재로 간 뒤로는… 못 봤어요. 정말이에요.”"}
-      ]},
-    partner:{ name:"박정민", role:"동업자 · 45세", loc:"parlor",
+      ],
+      confront:{
+        will:"유언장 초안 이야기를 꺼내자 그녀의 낯빛이 변한다. “…그런 게 있었는지 오늘 처음 알았어요. 제 몫까지 줄인다는 걸 보고, 솔직히 화가 나긴 했어요. 하지만 그게 다예요.”",
+        terracelog:"테라스 문 기록을 들이밀자 그녀가 짧게 한숨을 쉰다. “…맞아요, 잠깐 나갔었어요. 딱 그만큼요. 답답해서 숨 좀 돌리려고. 그 짧은 시간에 뭘 할 수 있겠어요?”",
+        photo:"낡은 사진을 보여주자 그녀는 고개를 젓는다. “처음 보는 사진이에요. 그이가 저한테 말한 적 없는 옛날 일인가 보네요.”",
+        default:"그녀는 증거를 물끄러미 바라보다 고개를 젓는다. “그게 저랑 무슨 상관이죠?”"
+      }},
+    partner:{ name:"박정민", role:"동업자 · 45세", loc:"parlor", portrait:"partner",
       lines:[
-        {text:"“자금 문제요? 오해입니다. 태호와는 그저 이야기를 나누러 서재에 갔을 뿐이에요. 9시쯤이었나…”"},
-        {text:"“예, 언성이 좀 높아지긴 했죠. 하지만 제가 방을 나올 때 그는… 멀쩡히 살아 있었습니다. 맹세컨대.”"}
-      ]},
-    butler:{ name:"김도현", role:"집사 · 58세", loc:"kitchen",
+        {text:"“자금 문제요? 오해입니다. 태호와는 그저 이야기를 나누러 서재에 갔을 뿐이에요.”"},
+        {text:"“예, 언성이 좀 높아지긴 했죠. 하지만 제가 방을 나올 때 그는 멀쩡히 살아 있었습니다. 9시쯤이었을 거예요.”"}
+      ],
+      confront:{
+        letter:"타다 남은 편지를 내밀자 그의 얼굴이 굳는다. “…그걸 보셨군요. 맞습니다, 자금 문제로 다퉜어요. 하지만 그것과 살인은 다른 문제입니다.”",
+        clock:"멈춘 시계 이야기를 꺼내자 그는 말을 더듬는다. “9시 15분이요? …그, 정확히는 기억 안 납니다. 9시쯤이라고 한 건 대략적인 거였어요. 어쩌면 조금 더 늦게 나왔을 수도 있고요.” 처음 진술과 미묘하게 다른 대답이다.",
+        maidnote2:"하녀의 두 번째 메모를 보여주자 그는 눈에 띄게 안도한다. “맞아요, 9시 22분쯤 응접실로 들어왔어요. 그 뒤로 계속 거기 있었습니다. 확인해보세요.”",
+        default:"그는 증거를 흘깃 보고는 어깨를 으쓱한다. “그게 저와 무슨 상관인지 모르겠군요.”"
+      }},
+    son:{ name:"오세훈", role:"아들 · 29세", loc:"garden", portrait:"son",
+      lines:[
+        {text:"“아버지와는 사이가 안 좋았죠, 다들 알다시피. 하지만 제가 원했던 건 돈이 아니라 인정이었어요.”"},
+        {text:"“담배요? 제 겁니다. 화가 나서 정원에 나와 몇 대 피웠어요. 그게 다예요.”"}
+      ],
+      confront:{
+        footprint:"진흙 발자국 이야기를 꺼내자 그가 움찔한다. “저, 저 자국이요? 그, 그건… 제 건 아닌데요.” 뭔가 숨기는 눈치다.",
+        sonshoes:"젖은 구두를 내밀자 그가 한숨을 쉰다. “…네, 제 신발 맞아요. 265mm요. 그 발자국이 저보다 훨씬 크다는 거, 재보시면 알 거예요. 저 진짜 아니에요.”",
+        motionlog:"조명 센서 기록을 보여주자 그는 잠시 침묵하다 털어놓는다. “…사실 3분 정도, 정자 쪽으로 자리를 옮겼었어요. 비가 너무 들이쳐서요. 그때 무슨 일이 있었는지는 저도 몰라요. 정말입니다.”",
+        gazebo:"젖은 정자 벤치 이야기를 꺼내자 그는 순순히 인정한다. “네, 거기 잠깐 앉아 있었어요. 창문 쪽은… 등지고 있어서 못 봤어요.”",
+        will:"유언장 이야기를 꺼내자 그의 표정이 어두워진다. “…그것 때문에 죽였다고 생각하시는 거면, 완전히 틀렸어요. 전 그 유언장, 오늘 처음 봤어요.”",
+        default:"그는 증거를 대충 훑어보고는 시선을 피한다. “그게 저랑 무슨 상관인데요.”"
+      }},
+    butler:{ name:"김도현", role:"집사 · 58세", loc:"kitchen", portrait:"butler",
       lines:[
         {text:"“저는 그저 저녁 시중을 들었을 뿐입니다. 정원엔… 잠깐 바람을 쐬러 나갔던 것뿐이고요.”"},
-        {text:"“독초 도감이요? 손님들 안전을 위해 확인차 본 겁니다. 그뿐이에요.” 그의 손끝이 미세하게 떨리고 있었다.", requires:["poisonbook"]},
-        {text:"그 낡은 사진 이야기를 꺼내자 그의 표정이 굳었다. “…그걸 어디서. 삼십 년 전 일입니다. 이미 다 끝난 일이라 생각했는데.”", requires:["photo"]}
-      ]},
-    son:{ name:"오세훈", role:"아들 · 29세", loc:"garden",
-      lines:[
-        {text:"“아버지와는 사이가 안 좋았죠, 다들 알다시피. 하지만 제가 원했던 건 아버지의 돈이 아니라 인정이었어요.”"},
-        {text:"“담배요? 제 겁니다. 화가 나서 정원에 나와 몇 대 피웠어요. 그게 다예요.”", requires:["cigarette"]}
-      ]}
+        {text:"“그날 밤이요? 특별한 건 없었습니다. 다들 그렇듯, 그저 맡은 일을 했을 뿐이죠.”"}
+      ],
+      confront:{
+        poisonbook:"독초 도감 이야기를 꺼내자 그의 손끝이 미세하게 떨린다. “…손님들 안전을 위해 확인차 본 겁니다. 그뿐이에요.”",
+        footprint:"진흙 발자국을 들이밀자 그는 애써 태연한 척한다. “제 구두일 수도 있죠. 정원을 걸었으니까요. 그게 무슨 문제입니까.”",
+        motionlog:"조명 센서 기록 — 9시 18분부터 21분까지, 정확히 그 창문 아래에서 멈춰 있었다는 사실을 짚어내자, 그의 표정이 처음으로 흔들린다. “…그, 그냥 잠깐 서 있었을 뿐입니다. 비가 그친 걸 보려고요.” 목소리가 떨린다. '잠깐'이라기엔 너무 긴 3분이다.",
+        photo:"낡은 사진을 꺼내 보이는 순간, 그가 얼어붙는다. “…그걸, 어디서. 삼십 년 전 일입니다. 이미 다 끝난 일이라 생각했는데.” 그의 눈시울이 붉어진다.",
+        letter:"타다 남은 편지를 보여주자 그는 고개를 젓는다. “그건 제가 알 바 아닙니다. 사장님과 박 선생님 사이의 일이겠죠.”",
+        default:"그는 증거를 흘끗 보고는 담담하게 말한다. “그게 저와 무슨 상관이 있는지 모르겠군요.”"
+      }}
   };
 
   function suspectLineLocked(line){
     return !!(line.requires && !line.requires.every(function(id){ return !!state.collected[id]; }));
   }
 
-  var KEY_EVIDENCE = ["footprint","poisonbook","photo"];
+  var KEY_EVIDENCE = ["footprint","motionlog","poisonbook","photo"];
   var CULPRIT = "butler";
+  var CLEARED_MSG = {
+    wife:"이수진의 알리바이는 명확했다 — 테라스를 비운 건 고작 90초, 그것도 사망 추정 시각보다 한참 전이었다. 그녀는 범인이 아니다.",
+    partner:"박정민은 9시 22분 이후 계속 응접실에 있었다는 하녀의 증언이 있다. 사망 추정 시각과는 시간이 어긋난다. 그는 범인이 아니다.",
+    son:"오세훈의 신발은 265mm — 창문 아래 발자국과는 명백히 다른 크기다. 게다가 그는 정자에 잠깐 옮겨 앉았을 뿐, 창가에 계속 서 있던 건 아니었다. 그는 범인이 아니다."
+  };
 
   var state = {
     collected:{},
@@ -700,6 +788,36 @@
     log.scrollTop = log.scrollHeight;
   }
 
+  // ---------- SVG art: evidence icons + suspect portraits ----------
+  var ICON_SVG = {
+    glass:'<path d="M16 6h16l-2 14a6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="20" x2="24" y2="36" stroke="currentColor" stroke-width="2"/><line x1="16" y1="40" x2="32" y2="40" stroke="currentColor" stroke-width="2"/><line x1="24" y1="36" x2="24" y2="40" stroke="currentColor" stroke-width="2"/>',
+    letter:'<rect x="6" y="12" width="36" height="26" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 13l17 14 17-14" fill="none" stroke="currentColor" stroke-width="2"/>',
+    clock:'<circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2"/><line x1="24" y1="24" x2="24" y2="14" stroke="currentColor" stroke-width="2"/><line x1="24" y1="24" x2="17" y2="24" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="24" r="1.6" fill="currentColor"/>',
+    document:'<rect x="10" y="6" width="28" height="36" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="16" x2="33" y2="16" stroke="currentColor" stroke-width="1.6"/><line x1="15" y1="23" x2="33" y2="23" stroke="currentColor" stroke-width="1.6"/><line x1="15" y1="30" x2="27" y2="30" stroke="currentColor" stroke-width="1.6"/>',
+    book:'<path d="M24 12c-4-3-10-4-15-3v25c5-1 11 0 15 3 4-3 10-4 15-3V9c-5-1-11 0-15 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="24" y1="12" x2="24" y2="37" stroke="currentColor" stroke-width="1.6"/>',
+    cup:'<path d="M12 18h20v10a10 10 0 0 1-20 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M32 20h4a4 4 0 0 1 0 8h-4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="9" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="2"/>',
+    shoe:'<path d="M6 32c0-4 4-6 8-8 4-2 8-6 10-10 2 3 6 5 10 5 6 0 8 4 8 9v6H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    footprint:'<ellipse cx="24" cy="16" rx="7" ry="9" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="24" cy="33" rx="9" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>',
+    cigarette:'<rect x="6" y="22" width="28" height="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="30" y1="22" x2="30" y2="28" stroke="currentColor" stroke-width="2"/><path d="M38 20c2 2 2 4 0 6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M42 17c3 3 3 8 0 11" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+    sensor:'<rect x="14" y="20" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="27" r="2.4" fill="currentColor"/><path d="M18 14c3-3 9-3 12 0" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 10c6-6 14-6 20 0" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+    photo:'<rect x="8" y="6" width="32" height="36" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="10" width="24" height="20" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+  };
+  function evidenceIconSvg(kind){
+    return '<svg viewBox="0 0 48 48" class="ev-icon-svg" aria-hidden="true">'+(ICON_SVG[kind]||ICON_SVG.document)+'</svg>';
+  }
+
+  var PORTRAIT_ACCENT = {
+    wife:'<circle cx="24" cy="4" r="3" fill="currentColor"/><circle cx="24" cy="31" r="1.3" fill="var(--blood-bright)"/><circle cx="20" cy="32" r="1.1" fill="var(--blood-bright)"/><circle cx="28" cy="32" r="1.1" fill="var(--blood-bright)"/>',
+    partner:'<path d="M20 33l4 2 4-2v4l-4 2-4-2z" fill="var(--amber-bright)"/>',
+    son:'<path d="M12 9l3-5 3 4 3-5 3 5 3-4 3 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    butler:'<path d="M19 33l5 2 5-2v4l-5 2-5-2z" fill="var(--text-lo)"/>'
+  };
+  function suspectPortraitSvg(kind){
+    return '<svg viewBox="0 0 48 48" class="portrait-svg" aria-hidden="true">' +
+      '<path d="M24 6a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM6 44c0-10 8-18 18-18s18 8 18 18" fill="currentColor" opacity="0.9"/>' +
+      (PORTRAIT_ACCENT[kind]||'') + '</svg>';
+  }
+
   function renderLocGrid(){
     var grid = $("loc-grid");
     grid.innerHTML = "";
@@ -723,7 +841,7 @@
         var s = SUSPECTS[sid];
         var row = document.createElement("button");
         row.className = "suspect-row";
-        row.innerHTML = '<span class="mugshot">'+s.name.charAt(0)+'</span><span class="suspect-meta"><span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span></span>';
+        row.innerHTML = '<span class="mugshot">'+suspectPortraitSvg(s.portrait)+'</span><span class="suspect-meta"><span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span></span>';
         row.addEventListener("click", function(){ goTo(s.loc); });
         container.appendChild(row);
       });
@@ -784,6 +902,19 @@
         btn.addEventListener("click", function(){ talk(suspectHere); });
       }
       wrap.appendChild(btn);
+
+      if(idx >= 1 && s.confront){
+        var confrontBtn = document.createElement("button");
+        confrontBtn.className = "act-btn present";
+        if(collectedCount() === 0){
+          confrontBtn.textContent = "증거를 들이민다 · 확보한 증거가 없다";
+          confrontBtn.disabled = true;
+        } else {
+          confrontBtn.textContent = "증거를 들이민다 — " + s.name;
+          confrontBtn.addEventListener("click", function(){ openConfront(suspectHere); });
+        }
+        wrap.appendChild(confrontBtn);
+      }
     }
   }
 
@@ -814,9 +945,46 @@
     if(idx >= s.lines.length) return;
     var line = s.lines[idx];
     if(suspectLineLocked(line)) return;
-    appendLog("speech", s.name+" · "+s.role, line.text);
+    appendLog("speech", '<span class="log-portrait">'+suspectPortraitSvg(s.portrait)+'</span>'+s.name+' · '+s.role, line.text);
     state.talked[sid] = idx+1;
     renderActions();
+  }
+
+  // ---------- present evidence (contradiction) ----------
+  var confrontingSid = null;
+
+  function openConfront(sid){
+    confrontingSid = sid;
+    $("confront-title").textContent = SUSPECTS[sid].name + "에게 증거를 들이민다";
+    renderConfrontPick();
+    $("confront-overlay").hidden = false;
+  }
+
+  function renderConfrontPick(){
+    var wrap = $("confront-pick");
+    wrap.innerHTML = "";
+    Object.keys(state.collected).forEach(function(id){
+      var meta = findClueMeta(id);
+      if(!meta) return;
+      var row = document.createElement("button");
+      row.className = "ev-pick-row";
+      row.innerHTML = '<span class="mono" style="color:var(--amber); font-size:11px;">'+meta.tag+'</span><span>'+meta.label.replace(" 살피기","")+'</span>';
+      row.addEventListener("click", function(){ doConfront(id); });
+      wrap.appendChild(row);
+    });
+  }
+
+  function doConfront(evidenceId){
+    var sid = confrontingSid;
+    if(!sid) return;
+    var s = SUSPECTS[sid];
+    var meta = findClueMeta(evidenceId);
+    var reaction = (s.confront && s.confront[evidenceId]) || (s.confront && s.confront.default) || "별다른 반응이 없다.";
+    $("confront-overlay").hidden = true;
+    appendLog("confront", '<span class="log-portrait">'+suspectPortraitSvg(s.portrait)+'</span>'+s.name+'에게 '+(meta?meta.tag:"증거")+'를 들이밀다', reaction);
+    state.confronted = state.confronted || {};
+    state.confronted[sid] = state.confronted[sid] || {};
+    state.confronted[sid][evidenceId] = true;
   }
 
   // ---------- clue detail modal ----------
@@ -826,6 +994,7 @@
     $("clue-tag").textContent = meta.tag;
     $("clue-title").textContent = meta.label.replace(" 살피기","");
     $("clue-where").textContent = findClueLocationName(id) + "에서 발견";
+    $("clue-icon").innerHTML = evidenceIconSvg(meta.icon);
     $("clue-text").textContent = meta.text;
     $("clue-overlay").hidden = false;
   }
@@ -851,8 +1020,11 @@
 
   function winVerdictHtml(){
     return '<div class="verdict win"><div class="kicker mono">사건 종결</div>' +
-      '<p>당신은 증거를 하나씩 책상 위에 내려놓았다. 진흙 발자국, 접혀 있던 독초 도감의 페이지, 그리고 삼십 년 전의 낡은 사진. 김도현의 손이 떨리기 시작했다.</p>' +
-      '<p>“…어떻게, 어떻게 아신 겁니까.” 그는 결국 무너져 내렸다. 삼십 년 전, 강태호의 방관 속에서 여동생을 잃었던 일. 그리고 최근 그 사실을 빌미로 자신을 해고하려던 강태호에게, 살구씨에서 얻은 독을 와인에 섞어 넣었다는 사실을 털어놓았다. 손님용과 따로 쓴 찻잔도, 몰래 뜯어본 와인 라벨도 — 혹시 모를 실수를 자신조차 두려워했던 흔적이었다.</p>' +
+      '<p>당신은 증거를 하나씩 책상 위에 내려놓았다 — 창문 아래 깊게 팬 발자국, 그 발자국이 정확히 멈춰 있던 3분의 공백을 가리키는 조명 센서 기록, 살구씨 페이지가 접힌 독초 도감, 그리고 삼십 년 전의 빛바랜 사진.</p>' +
+      '<p>김도현의 손이 떨리기 시작했다. “…어떻게, 어떻게 아신 겁니까.” 그는 결국 무너져 내렸다.</p>' +
+      '<p>삼십 년 전, 강태호 소유의 공장에서 있었던 사고로 그는 하나뿐인 여동생을 잃었다. 강태호는 그 일을 조용히 덮었고, 김도현은 이름을 바꾼 채 그의 곁에 남아 삼십 년을 시중들었다 — 언젠가, 어떤 식으로든 대가를 치르게 하겠다는 마음 하나로.</p>' +
+      '<p>그러던 어느 날, 강태호가 우연히 오래된 서류 속에서 그의 진짜 이름을 발견했다. 발각과 해고, 어쩌면 더 나쁜 일이 두려웠던 김도현은 결심했다. 살구씨에서 얻은 독을 와인에 섞어 넣은 뒤, 창문 아래에서 모든 것이 끝나기를 기다렸다.</p>' +
+      '<p>“손님용과 따로 찻잔을 썼던 것도, 몰래 와인 라벨을 뜯어 확인했던 것도 — 혹시 모를 실수가 두려웠던 겁니다.” 그가 나직이 말했다. “후회는… 하지 않습니다. 다만 이렇게 끝날 줄은 몰랐군요.”</p>' +
       '<p style="color:var(--ink-soft); font-size:13px;">— 안개관 살인 사건, 종결되다.</p></div>';
   }
 
@@ -888,7 +1060,7 @@
       var card = document.createElement("button");
       card.className = "pick-card";
       card.setAttribute("aria-pressed", pickedSuspect===sid ? "true":"false");
-      card.innerHTML = '<span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span>';
+      card.innerHTML = '<span class="mugshot pick-mugshot">'+suspectPortraitSvg(s.portrait)+'</span><span class="suspect-meta"><span class="nm">'+s.name+'</span><span class="rl">'+s.role+'</span></span>';
       card.addEventListener("click", function(){ pickedSuspect = sid; renderSuspectPick(); });
       wrap.appendChild(card);
     });
@@ -901,7 +1073,7 @@
     if(ids.length===0){
       $("pick-hint").textContent = "아직 확보한 증거가 없다. 저택을 더 조사해야 한다.";
     } else {
-      $("pick-hint").textContent = "최대 3개까지 선택할 수 있다. ("+pickedEvidence.length+"/3)";
+      $("pick-hint").textContent = "최대 4개까지 선택할 수 있다. ("+pickedEvidence.length+"/4)";
     }
     ids.forEach(function(id){
       var meta = findClueMeta(id);
@@ -914,7 +1086,7 @@
       row.addEventListener("click", function(){
         var i = pickedEvidence.indexOf(id);
         if(i!==-1){ pickedEvidence.splice(i,1); }
-        else if(pickedEvidence.length<3){ pickedEvidence.push(id); }
+        else if(pickedEvidence.length<4){ pickedEvidence.push(id); }
         renderEvidencePick();
       });
       wrap.appendChild(row);
@@ -930,7 +1102,7 @@
     var box = $("verdict-box");
     var s = SUSPECTS[pickedSuspect];
 
-    if(pickedSuspect===CULPRIT && keyHits>=2){
+    if(pickedSuspect===CULPRIT && keyHits>=3){
       box.innerHTML = winVerdictHtml();
       state.closed = true;
       $("case-status").textContent = "사건 종결";
@@ -941,11 +1113,12 @@
     } else if(pickedSuspect===CULPRIT){
       box.innerHTML =
         '<div class="verdict lose"><div class="kicker mono">증거 불충분</div>' +
-        '<p>당신의 추리는 옳은 방향을 가리키고 있다. 하지만 '+s.name+'은(는) 침착하게 혐의를 부인했다. “증거가… 있습니까?” 더 확실한 물증이 필요하다.</p></div>';
+        '<p>당신의 추리는 옳은 방향을 가리키고 있다. 하지만 '+s.name+'은(는) 침착하게 혐의를 부인했다. “증거가… 있습니까?” 결정적인 한 조각이 아직 부족하다.</p></div>';
     } else {
+      var clearMsg = CLEARED_MSG[pickedSuspect];
       box.innerHTML =
         '<div class="verdict lose"><div class="kicker mono">오판</div>' +
-        '<p>당신의 주장은 근거가 부족했다. '+s.name+'은(는) 당황하며 결백을 주장했고, 사건은 다시 미궁 속으로 빠져들었다. 진범은 여전히 저택 어딘가에 남아 있다.</p></div>';
+        '<p>당신의 주장에 '+s.name+'은(는) 당황하며 결백을 주장했다. '+(clearMsg || "사건은 다시 미궁 속으로 빠져들었다.")+' 진범은 여전히 저택 어딘가에 남아 있다.</p></div>';
     }
   }
 
@@ -967,16 +1140,17 @@
     $("submit-accuse").addEventListener("click", submitAccuse);
     $("replay-btn").addEventListener("click", function(){ location.reload(); });
     $("close-clue").addEventListener("click", function(){ $("clue-overlay").hidden = true; });
+    $("close-confront").addEventListener("click", function(){ $("confront-overlay").hidden = true; });
     $("notes").addEventListener("input", saveNotes);
 
     // dismissible overlays: backdrop click + Escape (intro is excluded — it must be started explicitly)
-    ["accuse-overlay","clue-overlay"].forEach(function(id){
+    ["accuse-overlay","clue-overlay","confront-overlay"].forEach(function(id){
       var el = $(id);
       el.addEventListener("click", function(e){ if(e.target === el) el.hidden = true; });
     });
     document.addEventListener("keydown", function(e){
       if(e.key !== "Escape") return;
-      ["accuse-overlay","clue-overlay"].forEach(function(id){
+      ["accuse-overlay","clue-overlay","confront-overlay"].forEach(function(id){
         var el = $(id);
         if(!el.hidden) el.hidden = true;
       });
